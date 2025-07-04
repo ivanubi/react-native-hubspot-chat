@@ -1,0 +1,17 @@
+{
+    "name": "react-native-hubspot-chat",
+    "version": "1.0.0",
+    "author": "SaranshMalik",
+    "main": "index.js",
+    "types": "index.js",
+    "keywords": [
+      "react-native",
+      "hubspot",
+      "chat",
+      "mobile-sdk"
+    ],
+    "peerDependencies": {
+      "react-native": ">=0.71.0"
+    },
+    "license": "MIT"
+  }
