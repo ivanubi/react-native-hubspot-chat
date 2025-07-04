@@ -37,12 +37,30 @@ class HubspotChatModule(reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
-  fun identifyVisitor(email: String, name: String, promise: Promise) {
+  fun identifyVisitor(identityToken: String, email: String?, promise: Promise) {
+    HubspotManager.setUserIdentity(identityToken, email)
+    promise.resolve(null)
+  }
+
+  @ReactMethod
+  fun setChatProperties(properties: ReadableMap, promise: Promise) {
+    val map = mutableMapOf<String, String>()
+    val iterator = properties.keySetIterator()
+    while (iterator.hasNextKey()) {
+      val key = iterator.nextKey()
+      map[key] = properties.getString(key) ?: ""
+    }
+    HubspotManager.setChatProperties(map)
+    promise.resolve(null)
+  }
+
+  @ReactMethod
+  fun endSession(promise: Promise) {
     try {
-      HubspotManager.identify(email, name)
+      HubspotManager.logout()
       promise.resolve(null)
     } catch (e: Exception) {
-      promise.reject("IDENTIFY_ERROR", "Failed to identify visitor", e)
+      promise.reject("LOGOUT_ERROR", "Failed to logout", e)
     }
   }
 }

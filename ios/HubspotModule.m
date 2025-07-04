@@ -13,5 +13,12 @@ RCT_EXTERN_METHOD(identifyVisitor:(NSString *)email
                   name:(NSString *)name
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
+                  
+RCT_EXTERN_METHOD(setChatProperties:(NSArray *)properties
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(endSession:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 
 @end

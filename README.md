@@ -70,8 +70,20 @@ await HubspotChat.init();
 
 ### Identify Visitor
 
+You would need to have an identity token from hubspot first. Please read here for more details:
+https://developers.hubspot.com/docs/guides/api/conversations/mobile-chat-sdk/ios#identify-users-with-the-hubspot-visitor-identification-token
+
 ```js
-await HubspotChat.identify('user@example.com', 'John Doe');
+await HubspotChat.identify('your_signed_identity_token', 'user@example.com');
+```
+
+### Set custom chat properties
+
+```js
+await HubspotChat.setProperties([
+  { name: 'plan', value: 'pro' },
+  { name: 'theme', value: 'dark' }
+]);
 ```
 
 ### Open Chat
@@ -87,11 +99,11 @@ await HubspotChat.open('your-chatflow-tag');
 This module includes `.d.ts` definitions out-of-the-box.
 
 ```ts
-import HubspotChat from 'react-native-hubspot-chat';
-
-HubspotChat.init();
-HubspotChat.open('chatflow');
-HubspotChat.identify('email@example.com', 'Name');
+HubspotChat.init(): Promise<void>;
+HubspotChat.open(tag: string): Promise<void>;
+HubspotChat.identify(identityToken: string, email?: string): Promise<void>;
+HubspotChat.setProperties(props: { name: string; value: string }[] | Record<string, string>): Promise<void>;
+HubspotChat.endSession(): Promise<void>;
 ```
 
 ---

@@ -46,6 +46,21 @@ class HubspotModule: NSObject {
   }
 
   @objc
+  func setChatProperties(_ properties: [[String: Any]],
+                        resolver resolve: @escaping RCTPromiseResolveBlock,
+                        rejecter reject: @escaping RCTPromiseRejectBlock) {
+    HubspotManager.setChatProperties(properties)
+    resolve(nil)
+  }
+
+  @objc
+  func endSession(_ resolve: @escaping RCTPromiseResolveBlock,
+                  rejecter reject: @escaping RCTPromiseRejectBlock) {
+    HubspotManager.clearUserData()
+    resolve(nil)
+  }
+
+  @objc
   static func requiresMainQueueSetup() -> Bool {
     return true
   }

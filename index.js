@@ -1,17 +1,29 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 
 const { HubspotModule } = NativeModules;
 
-if (!HubspotModule) {
-  throw new Error(
-    '[react-native-hubspot-chat] Native module not found. Make sure the native code is linked correctly and pods are installed.'
-  );
+function setProperties(props) {
+  if (Platform.OS === 'ios') {
+    if (!Array.isArray(props)) {
+      throw new Error('iOS requires an array of {name, value} objects');
+    }
+    return HubspotModule.setChatProperties(props);
+  } else {
+    if (Array.isArray(props)) {
+      const map = {};
+      props.forEach(({ name, value }) => {
+        map[name] = value;
+      });
+      return HubspotModule.setChatProperties(map);
+    }
+    return HubspotModule.setChatProperties(props);
+  }
 }
 
-const HubspotChat = {
+export default {
   init: () => HubspotModule.initSDK(),
-  open: (chatflowTag) => HubspotModule.openChat(chatflowTag),
-  identify: (email, name) => HubspotModule.identifyVisitor(email, name),
+  open: (tag) => HubspotModule.openChat(tag),
+  identify: (identityToken, email) => HubspotModule.identifyVisitor(identityToken, email),
+  setProperties,
+  endSession: () => HubspotModule.endSession(),
 };
-
-export default HubspotChat;
