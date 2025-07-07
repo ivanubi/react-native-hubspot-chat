@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "react-native-hubspot-chat"
-  s.version      = "1.0.0"
+  s.version      = "1.0.2"
   s.summary      = "React Native wrapper for HubSpot Mobile Chat SDK"
   s.description  = "This library integrates HubSpot's Mobile Chat SDK into React Native apps."
   s.homepage     = "https://github.com/SaranshMalik/react-native-hubspot-chat"

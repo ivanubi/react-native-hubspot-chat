@@ -1,66 +1,86 @@
 package com.reactnativehubspotchat
 
 import android.app.Activity
+import android.os.Handler
+import android.os.Looper
+import android.content.Context
+import android.content.Intent
 import com.facebook.react.bridge.*
-import com.hubspot.mobile.sdk.HubspotManager
+import com.hubspot.mobilesdk.HubspotManager
+import kotlinx.coroutines.*
+import android.util.Log
+import com.hubspot.mobilesdk.HubspotWebActivity
 
 class HubspotChatModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
 
-  override fun getName(): String {
-    return "HubspotModule"
+  override fun getName(): String = "HubspotModule"
+  private val appContext: Context = reactContext
+  private lateinit var hubspotManager: HubspotManager
+
+  @ReactMethod
+    fun initSDK(promise: Promise) {
+      try {
+        hubspotManager = HubspotManager.getInstance(appContext)
+        hubspotManager?.enableLogs()
+        hubspotManager?.configure()
+        promise.resolve(true)
+      } catch (e: Exception) {
+        Log.e("HubspotModule", "Failed to init SDK", e)
+        promise.reject("INIT_ERROR", e.message, e)
+      }
+    }
+
+  @ReactMethod
+  fun openChat(tag:String, promise: Promise) {
+      try {
+        val intent = Intent(appContext, HubspotWebActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) // Required when starting from non-activity context
+        appContext.startActivity(intent)
+        promise.resolve(null)
+      } catch (e: Exception) {
+        Log.e("HubspotModule", "Error opening chat: ${e.message}")
+        promise.reject("CHAT_ERROR", "Failed to open chat", e)
+      }
   }
 
   @ReactMethod
-  fun initSDK(promise: Promise) {
+  fun identifyVisitor(identityToken: String, email: String, promise: Promise) {
     try {
-      HubspotManager.initialize(reactApplicationContext)
+      hubspotManager.setUserIdentity(identityToken, email)
       promise.resolve(null)
     } catch (e: Exception) {
-      promise.reject("INIT_ERROR", "Failed to initialize HubSpot SDK", e)
+      promise.reject("IDENTIFY_FAILED", e)
     }
   }
 
   @ReactMethod
-  fun openChat(tag: String, promise: Promise) {
+  fun setChatProperties(props: ReadableMap, promise: Promise) {
     try {
-      val activity: Activity? = currentActivity
-      if (activity != null) {
-        HubspotManager.showChat(activity, tag)
-        promise.resolve(null)
-      } else {
-        promise.reject("NO_ACTIVITY", "No current activity")
+      val keyValuePair = mutableMapOf<String, String>()
+      val iterator = props.keySetIterator()
+      while (iterator.hasNextKey()) {
+        val key = iterator.nextKey()
+        keyValuePair[key] = props.getString(key) ?: ""
       }
+      hubspotManager.setChatProperties(keyValuePair)
+      promise.resolve(null)
     } catch (e: Exception) {
-      promise.reject("CHAT_ERROR", "Failed to open HubSpot chat", e)
+      promise.reject("SET_PROPERTIES_FAILED", e)
     }
-  }
-
-  @ReactMethod
-  fun identifyVisitor(identityToken: String, email: String?, promise: Promise) {
-    HubspotManager.setUserIdentity(identityToken, email)
-    promise.resolve(null)
-  }
-
-  @ReactMethod
-  fun setChatProperties(properties: ReadableMap, promise: Promise) {
-    val map = mutableMapOf<String, String>()
-    val iterator = properties.keySetIterator()
-    while (iterator.hasNextKey()) {
-      val key = iterator.nextKey()
-      map[key] = properties.getString(key) ?: ""
-    }
-    HubspotManager.setChatProperties(map)
-    promise.resolve(null)
   }
 
   @ReactMethod
   fun endSession(promise: Promise) {
-    try {
-      HubspotManager.logout()
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.reject("LOGOUT_ERROR", "Failed to logout", e)
+    CoroutineScope(Dispatchers.Main).launch {
+      try {
+        hubspotManager.logout()
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.reject("LOGOUT_FAILED", e)
+      }
     }
   }
+
 }
+

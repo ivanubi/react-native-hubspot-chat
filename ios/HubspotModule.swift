@@ -38,26 +38,39 @@ class HubspotModule: NSObject {
   }
 
   @objc
-  func identifyVisitor(_ email: String, name: String,
-                       resolver resolve: @escaping RCTPromiseResolveBlock,
-                       rejecter reject: @escaping RCTPromiseRejectBlock) {
-    HubspotManager.shared.identify(email: email, name: name)
-    resolve(nil)
+  func identifyVisitor(_ identityToken: String, email: String?,
+                      resolver resolve: @escaping RCTPromiseResolveBlock,
+                      rejecter reject: @escaping RCTPromiseRejectBlock) {
+      DispatchQueue.main.async {
+      HubspotManager.shared.setUserIdentity(identityToken: identityToken, email: email ?? "")
+      resolve(nil)
+    }
   }
 
   @objc
   func setChatProperties(_ properties: [[String: Any]],
                         resolver resolve: @escaping RCTPromiseResolveBlock,
                         rejecter reject: @escaping RCTPromiseRejectBlock) {
-    HubspotManager.setChatProperties(properties)
-    resolve(nil)
+    var map = [String: String]()
+    for item in properties {
+      if let name = item["name"] as? String, let value = item["value"] as? String {
+        map[name] = value
+      }
+    }
+
+    Task {
+      await HubspotManager.shared.setChatProperties(data: map)
+      resolve(nil)
+    }
   }
 
   @objc
   func endSession(_ resolve: @escaping RCTPromiseResolveBlock,
                   rejecter reject: @escaping RCTPromiseRejectBlock) {
-    HubspotManager.clearUserData()
-    resolve(nil)
+    Task {
+      await HubspotManager.shared.clearUserData()
+      resolve(nil)
+    }
   }
 
   @objc

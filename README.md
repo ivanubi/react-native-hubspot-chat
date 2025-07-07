@@ -33,7 +33,7 @@ You need to get your plist file with hubspot configuration from your hubspot acc
    - Select `Hubspot-Info.plist`
    - Make sure the file is added to the main app target (check the checkbox)
 
-4. Install pods:
+2. Install pods:
 
 ```sh
 cd ios && pod install
