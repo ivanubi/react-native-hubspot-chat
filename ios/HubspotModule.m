@@ -9,8 +9,9 @@ RCT_EXTERN_METHOD(openChat:(NSString *)tag
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(identifyVisitor:(NSString *)email
-                  name:(NSString *)name
+// Match Swift: func identifyVisitor(_ identityToken: String, email: String?, resolver: ..., rejecter: ...)
+RCT_EXTERN_METHOD(identifyVisitor:(NSString *)identityToken
+                  email:(NSString *_Nullable)email
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
                   

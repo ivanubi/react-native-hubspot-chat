@@ -37,7 +37,8 @@ class HubspotModule: NSObject {
     }
   }
 
-  @objc
+  // Expose to React Native with explicit selector matching HubspotModule.m
+  @objc(identifyVisitor:email:resolver:rejecter:)
   func identifyVisitor(_ identityToken: String, email: String?,
                       resolver resolve: @escaping RCTPromiseResolveBlock,
                       rejecter reject: @escaping RCTPromiseRejectBlock) {
