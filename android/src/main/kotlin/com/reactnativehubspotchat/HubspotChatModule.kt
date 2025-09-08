@@ -10,6 +10,7 @@ import com.hubspot.mobilesdk.HubspotManager
 import kotlinx.coroutines.*
 import android.util.Log
 import com.hubspot.mobilesdk.HubspotWebActivity
+import com.facebook.react.modules.core.DeviceEventManagerModule
 
 class HubspotChatModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
@@ -81,6 +82,18 @@ class HubspotChatModule(reactContext: ReactApplicationContext) :
       }
     }
   }
+
+  // region Push Notifications
+  @ReactMethod
+  fun setPushToken(token: String, promise: Promise) {
+    try {
+      hubspotManager.setPushToken(token)
+      promise.resolve(null)
+    } catch (e: Exception) {
+      promise.reject("SET_PUSH_TOKEN_FAILED", e)
+    }
+  }
+  // endregion
 
 }
 

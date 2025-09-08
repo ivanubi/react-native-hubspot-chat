@@ -1,6 +1,5 @@
 #import <React/RCTBridgeModule.h>
-
-@interface RCT_EXTERN_MODULE(HubspotModule, NSObject)
+@interface RCT_EXTERN_MODULE(HubspotModule, RCTEventEmitter)
 
 RCT_EXTERN_METHOD(initSDK:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
@@ -20,6 +19,20 @@ RCT_EXTERN_METHOD(setChatProperties:(NSArray *)properties
                   rejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(endSession:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+// Push notifications
+RCT_EXTERN_METHOD(configurePushMessaging:(BOOL)promptForNotificationPermissions
+                  allowProvisional:(BOOL)allowProvisional
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(setPushToken:(NSString *)tokenHex
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(setAPNsDeviceToken:(NSData *)deviceToken
+                  resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
 @end

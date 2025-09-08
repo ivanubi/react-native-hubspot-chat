@@ -1,6 +1,7 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeModules, Platform, NativeEventEmitter } from 'react-native';
 
 const { HubspotModule } = NativeModules;
+const hubspotEmitter = new NativeEventEmitter(HubspotModule);
 
 function setProperties(props) {
   if (Platform.OS === 'ios') {
@@ -26,4 +27,11 @@ export default {
   identify: (identityToken, email) => HubspotModule.identifyVisitor(identityToken, email),
   setProperties,
   endSession: () => HubspotModule.endSession(),
+  // Push notifications
+  configurePushMessaging: ({ prompt = false, allowProvisional = true } = {}) =>
+    Platform.OS === 'ios'
+      ? HubspotModule.configurePushMessaging(Boolean(prompt), Boolean(allowProvisional))
+      : Promise.resolve(),
+  setPushToken: (token) => HubspotModule.setPushToken(token),
+  addNewMessageListener: (handler) => hubspotEmitter.addListener('HubspotNewMessage', handler),
 };
