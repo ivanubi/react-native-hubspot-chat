@@ -46,9 +46,9 @@ class HubspotChatModule(reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
-  fun identifyVisitor(identityToken: String, email: String, promise: Promise) {
+  fun identifyVisitor(identityToken: String, email: String?, promise: Promise) {
     try {
-      hubspotManager.setUserIdentity(identityToken, email)
+      hubspotManager.setUserIdentity(identityToken, email ?: "")
       promise.resolve(null)
     } catch (e: Exception) {
       promise.reject("IDENTIFY_FAILED", e)
@@ -92,6 +92,18 @@ class HubspotChatModule(reactContext: ReactApplicationContext) :
     } catch (e: Exception) {
       promise.reject("SET_PUSH_TOKEN_FAILED", e)
     }
+  }
+  // endregion
+
+  // region RN Event Emitter compatibility (prevents warnings on JS side)
+  @ReactMethod
+  fun addListener(eventName: String) {
+    // No-op: required to conform to React Native's NativeEventEmitter expectations
+  }
+
+  @ReactMethod
+  fun removeListeners(count: Int) {
+    // No-op
   }
   // endregion
 
