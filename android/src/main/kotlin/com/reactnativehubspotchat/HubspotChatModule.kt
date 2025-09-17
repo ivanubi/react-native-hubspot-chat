@@ -86,11 +86,13 @@ class HubspotChatModule(reactContext: ReactApplicationContext) :
   // region Push Notifications
   @ReactMethod
   fun setPushToken(token: String, promise: Promise) {
-    try {
-      hubspotManager.setPushToken(token)
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.reject("SET_PUSH_TOKEN_FAILED", e)
+    CoroutineScope(Dispatchers.Main).launch {
+      try {
+        hubspotManager.setPushToken(token)
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.reject("SET_PUSH_TOKEN_FAILED", e)
+      }
     }
   }
   // endregion
