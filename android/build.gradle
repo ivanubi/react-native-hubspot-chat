@@ -31,6 +31,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
+        freeCompilerArgs += [
+            "-Xno-call-assertions",
+            "-Xno-param-assertions",
+            "-Xno-receiver-assertions"
+        ]
+        allWarningsAsErrors = false
     }
 }
 
