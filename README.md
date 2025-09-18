@@ -50,8 +50,23 @@ cd ios && pod install
 
 ### Android
 
+**Requirements:**
+- `compileSdk` and `targetSdk` 34 or higher
+- `minSdk` 26 or higher
+
+**Setup:**
 1. Download your `hubspot-info.json` file from Hubspot Console
 2. Place it inside `android/app/src/main/assets/` (Create this folder if not already existing)
+3. Ensure your app's `android/app/build.gradle` has:
+   ```gradle
+   android {
+       compileSdk 34
+       defaultConfig {
+           targetSdk 34
+           minSdk 26
+       }
+   }
+   ```
 
 ---
 
